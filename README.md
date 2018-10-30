@@ -1,6 +1,6 @@
 ### Guzzle File Mock
 
-[![Build Status](https://travis-ci.org/svilborg/guzzle-file-mock.svg?branch=master)](https://travis-ci.org/svilborg/lara-role)
+[![Build Status](https://travis-ci.org/svilborg/guzzle-file-mock.svg?branch=master)](https://travis-ci.org/svilborg/guzzle-file-mock)
 
 
 Guzzle Mocking of Http calls to file system. On first call creates a snapshot and uses it afterwords.
