@@ -17,3 +17,18 @@ $client->post("users", [
 	            "form_params" => ["name" => "Peter"]
 	        ]);
 ```
+
+Php serializer and extension :
+
+```
+$client = new GuzzleFileMock([
+	            'file_mock' => __DIR__ . '/snapshots/',
+	            'file_mock_ext' => 'txt',
+	            'file_mock_serializer' => '\GuzzleHttpMock\Serializer\PhpSerializer',
+	            'base_uri' => 'https://some.endpoint.org/'
+	            ]);
+
+$client->post("users", [
+	            "form_params" => ["name" => "Peter"]
+	        ]);
+```
