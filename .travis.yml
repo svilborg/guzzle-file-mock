@@ -4,7 +4,7 @@ php:
   - 5.6
 
 before_script:
-  - composer install --dev --no-interaction --prefer-source
+  - composer install --no-interaction --prefer-source
   - cp phpunit.dist.xml phpunit.xml
 
 script: ./vendor/bin/phpunit
