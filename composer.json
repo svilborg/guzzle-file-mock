@@ -1,11 +1,10 @@
 {
     "name": "svilborg/guzzle-file-snapshot",
     "description": "Guzzle File Snapshot Mock",
-    "keywords": ["framework", "laravel"],
+    "keywords": ["guzzle", "http", "snapshot", "unit tests", "tests"],
     "license": "MIT",
     "type": "project",
     "require": {
-        "php": "^7.1.3",
         "guzzlehttp/guzzle": "^6.3"
     },
     "require-dev": {
