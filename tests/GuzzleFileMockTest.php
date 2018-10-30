@@ -8,11 +8,6 @@ use function GuzzleHttp\json_decode;
 class GuzzleFileMockTest extends TestCase
 {
 
-    /**
-     * A basic test example.
-     *
-     * @return void
-     */
     public function testGet()
     {
         $response = $this->getClient()->get("users");
@@ -79,10 +74,29 @@ class GuzzleFileMockTest extends TestCase
             ->__toString());
     }
 
+    public function testGetWithPhpSerializer()
+    {
+        $response = $this->getClientWithSerializer()->get("users");
+
+        $this->assertNotEmpty($response->getStatusCode());
+        $this->assertNotEmpty($response->getBody());
+        $this->assertNotEmpty($response->getHeaders());
+    }
+
     private function getClient()
     {
         return new GuzzleFileMock([
             'file_mock' => __DIR__ . '/snapshots/',
+            'base_uri' => 'https://jsonplaceholder.typicode.com/'
+        ]);
+    }
+
+    private function getClientWithSerializer()
+    {
+        return new GuzzleFileMock([
+            'file_mock' => __DIR__ . '/snapshots/',
+            'file_mock_ext' => 'txt',
+            'file_mock_serializer' => '\GuzzleHttpMock\Serializer\PhpSerializer',
             'base_uri' => 'https://jsonplaceholder.typicode.com/'
         ]);
     }

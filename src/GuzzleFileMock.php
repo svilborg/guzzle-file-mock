@@ -3,12 +3,37 @@ namespace GuzzleHttpMock;
 
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
+use GuzzleHttpMock\Serializer\JsonSerializer;
+use GuzzleHttpMock\Serializer\Serializable;
+use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
 class GuzzleFileMock extends GuzzleClient
 {
 
+    /**
+     * File extension
+     *
+     * @var string
+     */
+    private $ext = "json";
+
+    /**
+     * Cache path
+     *
+     * @var string
+     */
     private $path = "";
 
+    /**
+     *
+     * @var Serializable
+     */
+    private $serializer = null;
+
+    /**
+     *
+     * @param array $config
+     */
     public function __construct(array $config = [])
     {
         parent::__construct($config);
@@ -16,10 +41,26 @@ class GuzzleFileMock extends GuzzleClient
         if (isset($config["file_mock"])) {
             $this->path = $config["file_mock"];
         } else {
-            $this->path = __DIR__ . '/../../../../tests/snapshots/';
+            $this->path = realpath(__DIR__ . '/../../../../tests/snapshots/');
+        }
+
+        if (isset($config["file_mock_serializer"])) {
+            $class = $config["file_mock_serializer"];
+            $this->serializer = new $class();
+        } else {
+            $this->serializer = new JsonSerializer();
+        }
+
+        if (isset($config["file_mock_ext"])) {
+            $this->ext = $config["file_mock_ext"];
         }
     }
 
+    /**
+     *
+     * {@inheritdoc}
+     * @see \GuzzleHttp\Client::get($uri, $options)
+     */
     public function get(string $path = '/', array $options = [])
     {
         $key = $this->getKey($path, $options);
@@ -31,6 +72,11 @@ class GuzzleFileMock extends GuzzleClient
         return $this->decodeResponse($response);
     }
 
+    /**
+     *
+     * {@inheritdoc}
+     * @see \GuzzleHttp\Client::post($uri, $options)
+     */
     public function post(string $path = '/', array $options = [])
     {
         $key = $this->getKey($path, $options);
@@ -42,7 +88,11 @@ class GuzzleFileMock extends GuzzleClient
         return $this->decodeResponse($response);
     }
 
-
+    /**
+     *
+     * {@inheritdoc}
+     * @see \GuzzleHttp\Client::put($uri, $options)
+     */
     public function put(string $path = '/', array $options = [])
     {
         $key = $this->getKey($path, $options);
@@ -54,6 +104,11 @@ class GuzzleFileMock extends GuzzleClient
         return $this->decodeResponse($response);
     }
 
+    /**
+     *
+     * {@inheritdoc}
+     * @see \GuzzleHttp\Client::delete($uri, $options)
+     */
     public function delete(string $path = '/', array $options = [])
     {
         $key = $this->getKey($path, $options);
@@ -65,15 +120,28 @@ class GuzzleFileMock extends GuzzleClient
         return $this->decodeResponse($response);
     }
 
-    private function getKey($path, $options) {
+    /**
+     *
+     * @param string $path
+     * @param array $options
+     * @return string
+     */
+    private function getKey($path, $options)
+    {
         $key = md5($path . '?' . http_build_query($options));
 
         return $key;
     }
 
+    /**
+     *
+     * @param string $key
+     * @param callable $fn
+     * @return string
+     */
     private function snapshot($key, callable $fn)
     {
-        $filename = $this->path . $key . ".json";
+        $filename = $this->path . $key . "." . $this->ext;
 
         if (! file_exists($filename)) {
 
@@ -85,6 +153,11 @@ class GuzzleFileMock extends GuzzleClient
         return file_get_contents($filename);
     }
 
+    /**
+     *
+     * @param GuzzleResponse $response
+     * @return string
+     */
     private function encodeResponse(GuzzleResponse $response)
     {
         $data = [
@@ -92,12 +165,18 @@ class GuzzleFileMock extends GuzzleClient
             'headers' => $response->getHeaders(),
             'body' => (string) $response->getBody()
         ];
-        return (string) json_encode($data);
+
+        return $this->serializer->serialize($data);
     }
 
+    /**
+     *
+     * @param string $snapshot
+     * @return \GuzzleHttp\Psr7\Response
+     */
     private function decodeResponse($snapshot)
     {
-        $response = json_decode($snapshot, true);
+        $response = $this->serializer->unserialize($snapshot);
         return new GuzzleResponse($response['status'], $response['headers'], $response['body']);
     }
 }
