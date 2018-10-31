@@ -5,7 +5,6 @@ use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use GuzzleHttpMock\Serializer\JsonSerializer;
 use GuzzleHttpMock\Serializer\Serializable;
-use phpDocumentor\Reflection\DocBlock\Tags\Var_;
 
 class GuzzleFileMock extends GuzzleClient
 {
@@ -63,7 +62,7 @@ class GuzzleFileMock extends GuzzleClient
      */
     public function get(string $path = '/', array $options = [])
     {
-        $key = $this->getKey($path, $options);
+        $key = $this->getKey(__FUNCTION__, $path, $options);
 
         $response = $this->snapshot($key, function () use ($path, $options) {
             return $this->encodeResponse(parent::get($path, $options));
@@ -79,7 +78,7 @@ class GuzzleFileMock extends GuzzleClient
      */
     public function post(string $path = '/', array $options = [])
     {
-        $key = $this->getKey($path, $options);
+        $key = $this->getKey(__FUNCTION__, $path, $options);
 
         $response = $this->snapshot($key, function () use ($path, $options) {
             return $this->encodeResponse(parent::post($path, $options));
@@ -95,7 +94,7 @@ class GuzzleFileMock extends GuzzleClient
      */
     public function put(string $path = '/', array $options = [])
     {
-        $key = $this->getKey($path, $options);
+        $key = $this->getKey(__FUNCTION__, $path, $options);
 
         $response = $this->snapshot($key, function () use ($path, $options) {
             return $this->encodeResponse(parent::put($path, $options));
@@ -111,7 +110,39 @@ class GuzzleFileMock extends GuzzleClient
      */
     public function delete(string $path = '/', array $options = [])
     {
-        $key = $this->getKey($path, $options);
+        $key = $this->getKey(__FUNCTION__, $path, $options);
+
+        $response = $this->snapshot($key, function () use ($path, $options) {
+            return $this->encodeResponse(parent::delete($path, $options));
+        });
+
+        return $this->decodeResponse($response);
+    }
+
+    /**
+     *
+     * {@inheritdoc}
+     * @see \GuzzleHttp\Client::patch($uri, $options)
+     */
+    public function patch(string $path = '/', array $options = [])
+    {
+        $key = $this->getKey(__FUNCTION__, $path, $options);
+
+        $response = $this->snapshot($key, function () use ($path, $options) {
+            return $this->encodeResponse(parent::delete($path, $options));
+        });
+
+        return $this->decodeResponse($response);
+    }
+
+    /**
+     *
+     * {@inheritdoc}
+     * @see \GuzzleHttp\Client::head($uri, $options)
+     */
+    public function head(string $path = '/', array $options = [])
+    {
+        $key = $this->getKey(__FUNCTION__, $path, $options);
 
         $response = $this->snapshot($key, function () use ($path, $options) {
             return $this->encodeResponse(parent::delete($path, $options));
@@ -126,9 +157,9 @@ class GuzzleFileMock extends GuzzleClient
      * @param array $options
      * @return string
      */
-    private function getKey($path, $options)
+    private function getKey($method = "get", $path, $options)
     {
-        $key = md5($path . '?' . http_build_query($options));
+        $key = $method. "_" . md5($path . '?' . http_build_query($options));
 
         return $key;
     }

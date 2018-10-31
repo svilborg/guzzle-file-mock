@@ -69,10 +69,27 @@ class GuzzleFileMockTest extends TestCase
         $this->assertNotEmpty($response->getStatusCode());
         $this->assertNotEmpty($response->getBody());
         $this->assertNotEmpty($response->getHeaders());
-
-        $this->assertContains("1", $response->getBody()
-            ->__toString());
     }
+
+    public function testPatch()
+    {
+        $response = $this->getClient()->patch("users/1", []);
+
+        $this->assertNotEmpty($response->getStatusCode());
+        $this->assertNotEmpty($response->getBody());
+        $this->assertNotEmpty($response->getHeaders());
+    }
+
+
+    public function testHead()
+    {
+        $response = $this->getClient()->head("users/1", []);
+
+        $this->assertNotEmpty($response->getStatusCode());
+        $this->assertNotEmpty($response->getBody());
+        $this->assertNotEmpty($response->getHeaders());
+    }
+
 
     public function testGetWithPhpSerializer()
     {
