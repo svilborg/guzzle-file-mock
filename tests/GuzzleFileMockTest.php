@@ -4,6 +4,7 @@ namespace Tests\Unit;
 use GuzzleHttpMock\GuzzleFileMock;
 use PHPUnit\Framework\TestCase;
 use function GuzzleHttp\json_decode;
+use GuzzleHttp\Psr7\Request;
 
 class GuzzleFileMockTest extends TestCase
 {
@@ -15,6 +16,9 @@ class GuzzleFileMockTest extends TestCase
         $this->assertNotEmpty($response->getStatusCode());
         $this->assertNotEmpty($response->getBody());
         $this->assertNotEmpty($response->getHeaders());
+
+        $this->verifyUserResponse($response->getBody()
+            ->__toString());
     }
 
     public function testGetParams()
@@ -24,6 +28,9 @@ class GuzzleFileMockTest extends TestCase
         $this->assertNotEmpty($response->getStatusCode());
         $this->assertNotEmpty($response->getBody());
         $this->assertNotEmpty($response->getHeaders());
+
+        $this->verifyUserResponse($response->getBody()
+            ->__toString());
     }
 
     public function testPost()
@@ -80,7 +87,6 @@ class GuzzleFileMockTest extends TestCase
         $this->assertNotEmpty($response->getHeaders());
     }
 
-
     public function testHead()
     {
         $response = $this->getClient()->head("users/1", []);
@@ -90,6 +96,18 @@ class GuzzleFileMockTest extends TestCase
         $this->assertNotEmpty($response->getHeaders());
     }
 
+    public function testSendRequest()
+    {
+        $request = new Request("GET", "https://jsonplaceholder.typicode.com/users/1");
+        $response = $this->getClient()->send($request, []);
+
+        $this->assertNotEmpty($response->getStatusCode());
+        $this->assertNotEmpty($response->getBody());
+        $this->assertNotEmpty($response->getHeaders());
+
+        $this->assertContains("1", $response->getBody()
+            ->__toString());
+    }
 
     public function testGetWithPhpSerializer()
     {
@@ -98,6 +116,18 @@ class GuzzleFileMockTest extends TestCase
         $this->assertNotEmpty($response->getStatusCode());
         $this->assertNotEmpty($response->getBody());
         $this->assertNotEmpty($response->getHeaders());
+
+        $this->verifyUserResponse($response->getBody()
+            ->__toString());
+    }
+
+    private function verifyUserResponse($response)
+    {
+        $this->assertContains("name", $response);
+        $this->assertContains("username", $response);
+        $this->assertContains("address", $response);
+        $this->assertContains("phone", $response);
+        $this->assertContains("company", $response);
     }
 
     private function getClient()

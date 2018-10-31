@@ -5,6 +5,7 @@ use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\Psr7\Response as GuzzleResponse;
 use GuzzleHttpMock\Serializer\JsonSerializer;
 use GuzzleHttpMock\Serializer\Serializable;
+use Psr\Http\Message\RequestInterface;
 
 class GuzzleFileMock extends GuzzleClient
 {
@@ -129,7 +130,7 @@ class GuzzleFileMock extends GuzzleClient
         $key = $this->getKey(__FUNCTION__, $path, $options);
 
         $response = $this->snapshot($key, function () use ($path, $options) {
-            return $this->encodeResponse(parent::delete($path, $options));
+            return $this->encodeResponse(parent::patch($path, $options));
         });
 
         return $this->decodeResponse($response);
@@ -145,7 +146,40 @@ class GuzzleFileMock extends GuzzleClient
         $key = $this->getKey(__FUNCTION__, $path, $options);
 
         $response = $this->snapshot($key, function () use ($path, $options) {
-            return $this->encodeResponse(parent::delete($path, $options));
+            return $this->encodeResponse(parent::head($path, $options));
+        });
+
+        return $this->decodeResponse($response);
+    }
+
+    /**
+     *
+     * {@inheritdoc}
+     * @see \GuzzleHttp\Client::send()
+     */
+    public function send(RequestInterface $request, array $options = [])
+    {
+        $key = $this->getKey($request->getMethod(), $request->getUri()
+            ->getPath(), $options);
+
+        $response = $this->snapshot($key, function () use ($request, $options) {
+            return $this->encodeResponse(parent::send($request, $options));
+        });
+
+        return $this->decodeResponse($response);
+    }
+
+    /**
+     *
+     * {@inheritdoc}
+     * @see \GuzzleHttp\Client::request()
+     */
+    public function request($method, $uri = '', array $options = [])
+    {
+        $key = $this->getKey($method, $uri, $options);
+
+        $response = $this->snapshot($key, function () use ($method, $uri, $options) {
+            return $this->encodeResponse(parent::request($method, $uri, $options));
         });
 
         return $this->decodeResponse($response);
@@ -159,7 +193,7 @@ class GuzzleFileMock extends GuzzleClient
      */
     private function getKey($method = "get", $path, $options)
     {
-        $key = $method. "_" . md5($path . '?' . http_build_query($options));
+        $key = strtolower($method) . "_" . md5($path . '?' . http_build_query($options));
 
         return $key;
     }

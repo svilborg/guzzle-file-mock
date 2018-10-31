@@ -1,7 +1,7 @@
 {
     "name": "svilborg/guzzle-file-snapshot",
     "description": "Guzzle File Snapshot Mock",
-    "keywords": ["guzzle", "http", "snapshot", "unit tests", "tests"],
+    "keywords": ["guzzle", "http", "snapshot", "unit tests", "tests", "api", "api-client", "filesystem"],
     "license": "MIT",
     "type": "project",
     "require": {
