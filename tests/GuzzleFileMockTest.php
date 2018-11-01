@@ -2,12 +2,18 @@
 namespace Tests\Unit;
 
 use GuzzleHttpMock\GuzzleFileMock;
-use PHPUnit\Framework\TestCase;
-use function GuzzleHttp\json_decode;
 use GuzzleHttp\Psr7\Request;
+use PHPUnit\Framework\TestCase;
 
 class GuzzleFileMockTest extends TestCase
 {
+
+    private $mockDir = '';
+
+    protected function setUp()
+    {
+        $this->mockDir = __DIR__ . '/snapshots/';
+    }
 
     public function testGet()
     {
@@ -19,6 +25,8 @@ class GuzzleFileMockTest extends TestCase
 
         $this->verifyUserResponse($response->getBody()
             ->__toString());
+
+        $this->assertFileExists($this->mockDir . 'get_9517dfe800665059cd6d7e52d9ee31cd.json');
     }
 
     public function testGetParams()
@@ -31,6 +39,8 @@ class GuzzleFileMockTest extends TestCase
 
         $this->verifyUserResponse($response->getBody()
             ->__toString());
+
+        $this->assertFileExists($this->mockDir . 'get_90dd03490b7f865c8b59aafca7d3ec28.json');
     }
 
     public function testPost()
@@ -49,6 +59,8 @@ class GuzzleFileMockTest extends TestCase
 
         $this->assertContains("Test", $response->getBody()
             ->__toString());
+
+        $this->assertFileExists($this->mockDir . 'post_137ebb3105fab7b259f32e91905d5d08.json');
     }
 
     public function testPut()
@@ -67,6 +79,8 @@ class GuzzleFileMockTest extends TestCase
 
         $this->assertContains("Test", $response->getBody()
             ->__toString());
+
+        $this->assertFileExists($this->mockDir . 'put_de7e9042964c72ccdf8e2fc3e9f6e889.json');
     }
 
     public function testDelete()
@@ -76,6 +90,8 @@ class GuzzleFileMockTest extends TestCase
         $this->assertNotEmpty($response->getStatusCode());
         $this->assertNotEmpty($response->getBody());
         $this->assertNotEmpty($response->getHeaders());
+
+        $this->assertFileExists($this->mockDir . 'delete_90dd03490b7f865c8b59aafca7d3ec28.json');
     }
 
     public function testPatch()
@@ -85,6 +101,8 @@ class GuzzleFileMockTest extends TestCase
         $this->assertNotEmpty($response->getStatusCode());
         $this->assertNotEmpty($response->getBody());
         $this->assertNotEmpty($response->getHeaders());
+
+        $this->assertFileExists($this->mockDir . 'patch_90dd03490b7f865c8b59aafca7d3ec28.json');
     }
 
     public function testHead()
@@ -94,6 +112,8 @@ class GuzzleFileMockTest extends TestCase
         $this->assertNotEmpty($response->getStatusCode());
         $this->assertNotEmpty($response->getBody());
         $this->assertNotEmpty($response->getHeaders());
+
+        $this->assertFileExists($this->mockDir . 'head_90dd03490b7f865c8b59aafca7d3ec28.json');
     }
 
     public function testSendRequest()
@@ -133,7 +153,7 @@ class GuzzleFileMockTest extends TestCase
     private function getClient()
     {
         return new GuzzleFileMock([
-            'file_mock' => __DIR__ . '/snapshots/',
+            'file_mock' => $this->mockDir,
             'base_uri' => 'https://jsonplaceholder.typicode.com/'
         ]);
     }
@@ -141,7 +161,7 @@ class GuzzleFileMockTest extends TestCase
     private function getClientWithSerializer()
     {
         return new GuzzleFileMock([
-            'file_mock' => __DIR__ . '/snapshots/',
+            'file_mock' => $this->mockDir,
             'file_mock_ext' => 'txt',
             'file_mock_serializer' => '\GuzzleHttpMock\Serializer\PhpSerializer',
             'base_uri' => 'https://jsonplaceholder.typicode.com/'
