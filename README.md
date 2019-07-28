@@ -1,8 +1,8 @@
 ### Guzzle File Mock
 
 [![Build Status](https://api.travis-ci.org/svilborg/guzzle-file-mock.svg?branch=master)](https://travis-ci.org/svilborg/guzzle-file-mock)
-[![Latest Stable Version](https://img.shields.io/packagist/v/svilborg/guzzle-file-mock.svg)](https://packagist.org/packages/svilborg/guzzle-file-mock)
-[![License](https://img.shields.io/packagist/l/svilborg/guzzle-file-mock.svg)](https://github.com/svilborg/guzzle-file-mock/blob/master/LICENSE)
+[![Latest Stable Version](https://img.shields.io/packagist/v/svilborg/guzzle-file-snapshot.svg)](https://packagist.org/packages/svilborg/guzzle-file-snapshot)
+[![License](https://img.shields.io/packagist/l/svilborg/guzzle-file-snapshot.svg)](https://github.com/svilborg/guzzle-file-snapshot/blob/master/LICENSE)
 
 Guzzle Mocking of Http calls to file system. On first call creates a snapshot and uses it afterwords.
 
